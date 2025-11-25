@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { FaTimes, FaPaperPlane, FaRobot } from 'react-icons/fa';
+import { FaTimes, FaShoppingBag, FaUtensils, FaTrash, FaCheck } from 'react-icons/fa';
 
-const ChatBot = ({ items, onAddToCart, currency }) => {
+const ChatBot = ({ items, onAddToCart, currency, cart, onRemoveFromCart, onCheckout }) => {
     const [isOpen, setIsOpen] = useState(false);
+    const [view, setView] = useState('menu'); // 'menu' or 'cart'
     const [messages, setMessages] = useState([
         { text: "Hello! 👋 I'm your food assistant. What would you like to eat today?", sender: 'bot' }
     ]);
@@ -14,7 +15,7 @@ const ChatBot = ({ items, onAddToCart, currency }) => {
 
     useEffect(() => {
         scrollToBottom();
-    }, [messages, isOpen]);
+    }, [messages, isOpen, view]);
 
     const toggleChat = () => {
         setIsOpen(!isOpen);
@@ -24,8 +25,21 @@ const ChatBot = ({ items, onAddToCart, currency }) => {
         onAddToCart(item);
         setMessages(prev => [
             ...prev,
-            { text: `I've added ${item.name} to your cart! 😋`, sender: 'bot' }
+            { text: `Added ${item.name} to cart!`, sender: 'bot' }
         ]);
+    };
+
+    const handleRemoveItem = (id, name) => {
+        onRemoveFromCart(id);
+        setMessages(prev => [
+            ...prev,
+            { text: `Removed ${name} from cart.`, sender: 'bot' }
+        ]);
+    };
+
+    const handleCheckoutClick = () => {
+        setIsOpen(false);
+        onCheckout();
     };
 
     return (
@@ -39,6 +53,7 @@ const ChatBot = ({ items, onAddToCart, currency }) => {
                         </div>
                         <button onClick={toggleChat} className="close-chat"><FaTimes /></button>
                     </div>
+
                     <div className="chatbot-messages">
                         {messages.map((msg, index) => (
                             <div key={index} className={`chat-message ${msg.sender}`}>
@@ -46,10 +61,9 @@ const ChatBot = ({ items, onAddToCart, currency }) => {
                             </div>
                         ))}
 
-                        {/* Always show the menu list as a special message type or just below the greeting */}
-                        {messages.length === 1 && (
+                        {view === 'menu' && (
                             <div className="chat-menu-list">
-                                <p className="list-title">Here's what we have:</p>
+                                <p className="list-title">Menu</p>
                                 {items.map(item => (
                                     <div key={item.id} className="chat-menu-item">
                                         <div className="chat-item-info">
@@ -61,12 +75,52 @@ const ChatBot = ({ items, onAddToCart, currency }) => {
                                 ))}
                             </div>
                         )}
+
+                        {view === 'cart' && (
+                            <div className="chat-menu-list">
+                                <p className="list-title">Your Cart</p>
+                                {cart.length === 0 ? (
+                                    <p className="empty-cart-msg">Your cart is empty.</p>
+                                ) : (
+                                    cart.map(item => (
+                                        <div key={item.id} className="chat-menu-item">
+                                            <div className="chat-item-info">
+                                                <span className="chat-item-name">{item.name} (x{item.quantity})</span>
+                                                <span className="chat-item-price">{currency.symbol}{Math.round(item.price * item.quantity / currency.rate)}</span>
+                                            </div>
+                                            <button onClick={() => handleRemoveItem(item.id, item.name)} className="chat-remove-btn"><FaTrash /></button>
+                                        </div>
+                                    ))
+                                )}
+                                {cart.length > 0 && (
+                                    <button onClick={handleCheckoutClick} className="chat-checkout-btn">
+                                        Checkout Now <FaCheck />
+                                    </button>
+                                )}
+                            </div>
+                        )}
                         <div ref={messagesEndRef} />
+                    </div>
+
+                    <div className="chatbot-actions">
+                        <button
+                            className={`action-btn ${view === 'menu' ? 'active' : ''}`}
+                            onClick={() => setView('menu')}
+                        >
+                            <FaUtensils /> Menu
+                        </button>
+                        <button
+                            className={`action-btn ${view === 'cart' ? 'active' : ''}`}
+                            onClick={() => setView('cart')}
+                        >
+                            <FaShoppingBag /> Cart ({cart.length})
+                        </button>
                     </div>
                 </div>
             )}
             <button className="chatbot-toggle" onClick={toggleChat}>
                 <img src="/assets/chatbot-icon.png" alt="Chat" className="bot-icon-large" />
+                {cart.length > 0 && <span className="chat-badge">{cart.length}</span>}
             </button>
         </div>
     );

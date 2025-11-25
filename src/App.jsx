@@ -161,7 +161,14 @@ function App() {
               currency={currency}
             />
           )}
-          <ChatBot items={items} onAddToCart={handleAddToCart} currency={currency} />
+          <ChatBot
+            items={items}
+            onAddToCart={handleAddToCart}
+            currency={currency}
+            cart={cart}
+            onRemoveFromCart={handleRemoveFromCart}
+            onCheckout={handleCheckout}
+          />
         </>
       ) : (
         <Login onLogin={handleLogin} />

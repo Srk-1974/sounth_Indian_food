@@ -1058,6 +1058,88 @@ body.dark-mode .chat-item-name {
   }
 }
 
+/* New ChatBot Styles */
+.chatbot-actions {
+  display: flex;
+  border-top: 1px solid #eee;
+  background: white;
+}
+
+.action-btn {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  background: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 600;
+  color: #888;
+  transition: all 0.3s;
+}
+
+.action-btn.active {
+  color: var(--primary);
+  background: #fff3e0;
+}
+
+.action-btn:hover:not(.active) {
+  background: #f9f9f9;
+}
+
+.chat-remove-btn {
+  background: #ffebee;
+  color: #ff4444;
+  border: none;
+  padding: 6px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chat-checkout-btn {
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+  background: var(--secondary);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.chat-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: red;
+  color: white;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid white;
+}
+
+.empty-cart-msg {
+  text-align: center;
+  color: #888;
+  padding: 20px 0;
+  font-style: italic;
+}
+
 /* Responsive */
 @media (max-width: 800px) {
   .app-container {
