@@ -3,6 +3,7 @@ import Login from './components/Login';
 import Menu from './components/Menu';
 import Cart from './components/Cart';
 import PaymentModal from './components/PaymentModal';
+import ChatBot from './components/ChatBot';
 
 function App() {
   // Load initial data from localStorage or use defaults
@@ -160,6 +161,7 @@ function App() {
               currency={currency}
             />
           )}
+          <ChatBot items={items} onAddToCart={handleAddToCart} currency={currency} />
         </>
       ) : (
         <Login onLogin={handleLogin} />
