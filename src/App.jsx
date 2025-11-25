@@ -4,6 +4,8 @@ import Menu from './components/Menu';
 import Cart from './components/Cart';
 import PaymentModal from './components/PaymentModal';
 import ChatBot from './components/ChatBot';
+import Footer from './components/Footer';
+import HeaderBanner from './components/HeaderBanner';
 
 function App() {
   // Load initial data from localStorage or use defaults
@@ -130,6 +132,7 @@ function App() {
       {user ? (
         <>
           <div className="main-content">
+            <HeaderBanner />
             <Menu
               user={user}
               items={items}
@@ -145,6 +148,7 @@ function App() {
               darkMode={darkMode}
               toggleDarkMode={toggleDarkMode}
             />
+            <Footer />
           </div>
           <Cart
             cartItems={cart}
