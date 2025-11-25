@@ -1,0 +1,74 @@
+[
+  {
+    "value": "/assets/coffee.png",
+    "label": "Coffee"
+  },
+  {
+    "value": "/assets/dosa.png",
+    "label": "Dosa"
+  },
+  {
+    "value": "/assets/faluda.mp4",
+    "label": "Faluda"
+  },
+  {
+    "value": "/assets/idly.png",
+    "label": "Idly"
+  },
+  {
+    "value": "/assets/logo.png",
+    "label": "Logo"
+  },
+  {
+    "value": "/assets/masala-vada.png",
+    "label": "Masala Vada"
+  },
+  {
+    "value": "/assets/poori.png",
+    "label": "Poori"
+  },
+  {
+    "value": "/assets/stock-1.png",
+    "label": "Stock 1"
+  },
+  {
+    "value": "/assets/stock-2.png",
+    "label": "Stock 2"
+  },
+  {
+    "value": "/assets/stock-3.png",
+    "label": "Stock 3"
+  },
+  {
+    "value": "/assets/stock-4.png",
+    "label": "Stock 4"
+  },
+  {
+    "value": "/assets/stock-5.png",
+    "label": "Stock 5"
+  },
+  {
+    "value": "/assets/stock-6.png",
+    "label": "Stock 6"
+  },
+  {
+    "value": "/assets/stock-7.jpg",
+    "label": "Stock 7"
+  },
+  {
+    "value": "/assets/stock-8.png",
+    "label": "Stock 8"
+  },
+  {
+    "value": "/assets/tea.png",
+    "label": "Tea"
+  },
+  {
+    "value": "/assets/vada.png",
+    "label": "Vada"
+  },
+  {
+    "value": "/assets/Veg_Biryani.jpeg",
+    "label": "Veg Biryani"
+  }
+]
