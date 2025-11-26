@@ -9,6 +9,12 @@ const ChatBot = ({ items, onAddToCart, currency, cart, onRemoveFromCart, onCheck
     ]);
     const messagesEndRef = useRef(null);
 
+    // Dragging state
+    const [position, setPosition] = useState({ x: window.innerWidth - 80, y: window.innerHeight - 80 });
+    const [isDragging, setIsDragging] = useState(false);
+    const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+    const [hasMoved, setHasMoved] = useState(false);
+
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     };
@@ -17,8 +23,56 @@ const ChatBot = ({ items, onAddToCart, currency, cart, onRemoveFromCart, onCheck
         scrollToBottom();
     }, [messages, isOpen, view]);
 
+    // Handle window resize to keep bot on screen
+    useEffect(() => {
+        const handleResize = () => {
+            setPosition(prev => ({
+                x: Math.min(prev.x, window.innerWidth - 80),
+                y: Math.min(prev.y, window.innerHeight - 80)
+            }));
+        };
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    const handleMouseDown = (e) => {
+        setIsDragging(true);
+        setDragStart({ x: e.clientX - position.x, y: e.clientY - position.y });
+        setHasMoved(false);
+    };
+
+    const handleMouseMove = (e) => {
+        if (isDragging) {
+            const newX = e.clientX - dragStart.x;
+            const newY = e.clientY - dragStart.y;
+            setPosition({ x: newX, y: newY });
+            setHasMoved(true);
+        }
+    };
+
+    const handleMouseUp = () => {
+        setIsDragging(false);
+    };
+
+    // Attach global mouse listeners when dragging
+    useEffect(() => {
+        if (isDragging) {
+            window.addEventListener('mousemove', handleMouseMove);
+            window.addEventListener('mouseup', handleMouseUp);
+        } else {
+            window.removeEventListener('mousemove', handleMouseMove);
+            window.removeEventListener('mouseup', handleMouseUp);
+        }
+        return () => {
+            window.removeEventListener('mousemove', handleMouseMove);
+            window.removeEventListener('mouseup', handleMouseUp);
+        };
+    }, [isDragging]);
+
     const toggleChat = () => {
-        setIsOpen(!isOpen);
+        if (!hasMoved) {
+            setIsOpen(!isOpen);
+        }
     };
 
     const handleAddItem = (item) => {
@@ -43,15 +97,25 @@ const ChatBot = ({ items, onAddToCart, currency, cart, onRemoveFromCart, onCheck
     };
 
     return (
-        <div className="chatbot-container">
+        <div
+            className="chatbot-container"
+            style={{
+                left: position.x,
+                top: position.y,
+                cursor: isDragging ? 'grabbing' : 'grab',
+                bottom: 'auto',
+                right: 'auto'
+            }}
+            onMouseDown={handleMouseDown}
+        >
             {isOpen && (
-                <div className="chatbot-window">
+                <div className="chatbot-window" onMouseDown={(e) => e.stopPropagation()}>
                     <div className="chatbot-header">
                         <div className="chatbot-title">
                             <img src="/assets/chatbot-icon.png" alt="Bot" className="bot-avatar-small" />
                             <span>Foodie Bot</span>
                         </div>
-                        <button onClick={toggleChat} className="close-chat"><FaTimes /></button>
+                        <button onClick={() => setIsOpen(false)} className="close-chat"><FaTimes /></button>
                     </div>
 
                     <div className="chatbot-messages">
@@ -119,9 +183,15 @@ const ChatBot = ({ items, onAddToCart, currency, cart, onRemoveFromCart, onCheck
                 </div>
             )}
             <button className="chatbot-toggle" onClick={toggleChat}>
-                <img src="/assets/chatbot-icon.png" alt="Chat" className="bot-icon-large" />
+                <img src="/assets/chatbot-icon.png" alt="Chat" className="bot-icon-large animated-bot" />
                 {cart.length > 0 && <span className="chat-badge">{cart.length}</span>}
             </button>
+            {!isOpen && (
+                <div className="chatbot-tooltip">
+                    Hello! 👋 I'm your food assistant. What would you like to eat today?
+                    <div className="tooltip-arrow"></div>
+                </div>
+            )}
         </div>
     );
 };

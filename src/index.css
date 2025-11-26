@@ -1242,3 +1242,83 @@ body.dark-mode .header-banner {
 body.dark-mode .header-banner p {
   color: white;
 }
+
+/* Chatbot Animation */
+@keyframes bounce {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animated-bot {
+  animation: bounce 2s infinite ease-in-out;
+}
+
+/* Ensure container doesn't have fixed bottom/right when controlled by JS */
+.chatbot-container {
+  /* These are overridden by inline styles but good to reset */
+  transition: transform 0.1s;
+  /* Smooth movement if needed, but might lag drag */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.chatbot-tooltip {
+  position: absolute;
+  bottom: 75px;
+  /* Above the icon */
+  right: 0;
+  background: white;
+  padding: 10px 15px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  font-size: 0.85rem;
+  color: #333;
+  width: 200px;
+  text-align: center;
+  pointer-events: none;
+  /* Let clicks pass through if needed */
+  animation: fadeIn 0.5s ease-out;
+  border: 1px solid #eee;
+  z-index: 1999;
+}
+
+.tooltip-arrow {
+  position: absolute;
+  bottom: -8px;
+  right: 25px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 8px solid white;
+}
+
+body.dark-mode .chatbot-tooltip {
+  background: #333;
+  color: white;
+  border-color: #555;
+}
+
+body.dark-mode .tooltip-arrow {
+  border-top-color: #333;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
