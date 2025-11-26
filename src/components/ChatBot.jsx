@@ -1,12 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { FaTimes, FaShoppingBag, FaUtensils, FaTrash, FaCheck } from 'react-icons/fa';
+import { FaTimes, FaShoppingBag, FaUtensils, FaTrash, FaCheck, FaPaperPlane } from 'react-icons/fa';
 
 const ChatBot = ({ items, onAddToCart, currency, cart, onRemoveFromCart, onCheckout }) => {
     const [isOpen, setIsOpen] = useState(false);
-    const [view, setView] = useState('menu'); // 'menu' or 'cart'
+    const [view, setView] = useState('chat'); // 'chat', 'menu' or 'cart'
     const [messages, setMessages] = useState([
         { text: "Hello! 👋 I'm your food assistant. What would you like to eat today?", sender: 'bot' }
     ]);
+    const [userInput, setUserInput] = useState('');
+    const [isTyping, setIsTyping] = useState(false);
     const messagesEndRef = useRef(null);
 
     // Dragging state
@@ -14,6 +16,9 @@ const ChatBot = ({ items, onAddToCart, currency, cart, onRemoveFromCart, onCheck
     const [isDragging, setIsDragging] = useState(false);
     const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
     const [hasMoved, setHasMoved] = useState(false);
+
+    // Detect if device is mobile/touch
+    const isMobile = 'ontouchstart' in window;
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -36,6 +41,10 @@ const ChatBot = ({ items, onAddToCart, currency, cart, onRemoveFromCart, onCheck
     }, []);
 
     const handleMouseDown = (e) => {
+        // Disable drag on mobile/touch devices
+        if (isMobile) {
+            return;
+        }
         setIsDragging(true);
         setDragStart({ x: e.clientX - position.x, y: e.clientY - position.y });
         setHasMoved(false);
@@ -54,7 +63,6 @@ const ChatBot = ({ items, onAddToCart, currency, cart, onRemoveFromCart, onCheck
         setIsDragging(false);
     };
 
-    // Attach global mouse listeners when dragging
     useEffect(() => {
         if (isDragging) {
             window.addEventListener('mousemove', handleMouseMove);
@@ -72,14 +80,96 @@ const ChatBot = ({ items, onAddToCart, currency, cart, onRemoveFromCart, onCheck
     const toggleChat = () => {
         if (!hasMoved) {
             setIsOpen(!isOpen);
+            if (!isOpen) {
+                setView('chat');
+            }
         }
+    };
+
+    // AI-like intelligence functions
+    const containsKeyword = (text, keywords) => {
+        return keywords.some(keyword => text.includes(keyword));
+    };
+
+    const getSmartResponse = (userMessage) => {
+        const msg = userMessage.toLowerCase();
+
+        if (containsKeyword(msg, ['hi', 'hello', 'hey'])) {
+            return "Hello! 😊 I'm here to help you order delicious South Indian food. What are you craving?";
+        }
+
+        if (containsKeyword(msg, ['breakfast', 'morning'])) {
+            const breakfastItems = items.filter(item => item.category === 'Breakfast');
+            if (breakfastItems.length > 0) {
+                return `Great choice! For breakfast, we have ${breakfastItems.map(i => i.name).join(', ')}. What would you like? 🌅`;
+            }
+        }
+
+        if (containsKeyword(msg, ['spicy', 'hot', 'chili'])) {
+            return "If you like spicy, I recommend our Vada! It's crispy and has a nice kick. Want to try it? 🌶️";
+        }
+
+        if (containsKeyword(msg, ['sweet', 'dessert'])) {
+            return "For something sweet, our beverages are perfect! Try Coffee or Tea. ☕";
+        }
+
+        if (containsKeyword(msg, ['hungry', 'starving', 'eat'])) {
+            return "I can help with that! 🍽️ Our most popular items are Idly and Dosa. Both are delicious and filling!";
+        }
+
+        if (containsKeyword(msg, ['cheap', 'budget', 'affordable', 'price'])) {
+            const cheapest = items.reduce((min, item) => item.price < min.price ? item : min, items[0]);
+            return `Our most affordable option is ${cheapest.name} at ${currency.symbol}${Math.round(cheapest.price / currency.rate)}. Great value! 💰`;
+        }
+
+        if (containsKeyword(msg, ['popular', 'best', 'recommend'])) {
+            return "Our most popular items are Idly and Dosa! They're customer favorites. Want to try one? ⭐";
+        }
+
+        if (containsKeyword(msg, ['drink', 'beverage', 'tea', 'coffee'])) {
+            const beverages = items.filter(item => item.category === 'Beverages');
+            return `We have ${beverages.map(i => i.name).join(' and ')}. Perfect to go with your meal! ☕`;
+        }
+
+        if (containsKeyword(msg, ['snack', 'light'])) {
+            const snacks = items.filter(item => item.category === 'Snacks');
+            if (snacks.length > 0) {
+                return `For snacks, try our ${snacks.map(i => i.name).join(' or ')}! 🍪`;
+            }
+        }
+
+        if (containsKeyword(msg, ['help', 'menu', 'show'])) {
+            return "I can help you find the perfect meal! Try asking me about breakfast, snacks, or beverages. Or just tell me what you're craving! 😊";
+        }
+
+        return "I'm not sure about that, but I can show you our menu! Click the Menu tab below to browse all items. 📋";
+    };
+
+    const handleSendMessage = () => {
+        if (!userInput.trim()) return;
+
+        const userMsg = { text: userInput, sender: 'user' };
+        setMessages(prev => [...prev, userMsg]);
+        setUserInput('');
+        setIsTyping(true);
+
+        setTimeout(() => {
+            setIsTyping(false);
+            const botResponse = getSmartResponse(userInput);
+            setMessages(prev => [...prev, { text: botResponse, sender: 'bot' }]);
+        }, 800);
+    };
+
+    const handleQuickReply = (message) => {
+        setUserInput(message);
+        setTimeout(() => handleSendMessage(), 100);
     };
 
     const handleAddItem = (item) => {
         onAddToCart(item);
         setMessages(prev => [
             ...prev,
-            { text: `Added ${item.name} to cart!`, sender: 'bot' }
+            { text: `Added ${item.name} to cart! Anything else? 😋`, sender: 'bot' }
         ]);
     };
 
@@ -96,13 +186,20 @@ const ChatBot = ({ items, onAddToCart, currency, cart, onRemoveFromCart, onCheck
         onCheckout();
     };
 
+    const quickReplies = [
+        "Show breakfast items",
+        "What's popular?",
+        "I'm hungry",
+        "Something spicy"
+    ];
+
     return (
         <div
             className="chatbot-container"
             style={{
                 left: position.x,
                 top: position.y,
-                cursor: isDragging ? 'grabbing' : 'grab',
+                cursor: isMobile ? 'pointer' : (isDragging ? 'grabbing' : 'grab'),
                 bottom: 'auto',
                 right: 'auto'
             }}
@@ -124,6 +221,26 @@ const ChatBot = ({ items, onAddToCart, currency, cart, onRemoveFromCart, onCheck
                                 {msg.text}
                             </div>
                         ))}
+
+                        {isTyping && (
+                            <div className="chat-message bot typing-indicator">
+                                <span></span><span></span><span></span>
+                            </div>
+                        )}
+
+                        {view === 'chat' && messages.length === 1 && (
+                            <div className="quick-replies">
+                                {quickReplies.map((reply, idx) => (
+                                    <button
+                                        key={idx}
+                                        className="quick-reply-btn"
+                                        onClick={() => handleQuickReply(reply)}
+                                    >
+                                        {reply}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
 
                         {view === 'menu' && (
                             <div className="chat-menu-list">
@@ -166,7 +283,29 @@ const ChatBot = ({ items, onAddToCart, currency, cart, onRemoveFromCart, onCheck
                         <div ref={messagesEndRef} />
                     </div>
 
+                    {view === 'chat' && (
+                        <div className="chat-input-container">
+                            <input
+                                type="text"
+                                className="chat-input"
+                                placeholder="Ask me anything..."
+                                value={userInput}
+                                onChange={(e) => setUserInput(e.target.value)}
+                                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                            />
+                            <button className="chat-send-btn" onClick={handleSendMessage}>
+                                <FaPaperPlane />
+                            </button>
+                        </div>
+                    )}
+
                     <div className="chatbot-actions">
+                        <button
+                            className={`action-btn ${view === 'chat' ? 'active' : ''}`}
+                            onClick={() => setView('chat')}
+                        >
+                            💬 Chat
+                        </button>
                         <button
                             className={`action-btn ${view === 'menu' ? 'active' : ''}`}
                             onClick={() => setView('menu')}

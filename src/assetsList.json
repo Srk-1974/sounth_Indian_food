@@ -1,5 +1,17 @@
 [
   {
+    "value": "/assets/bhadradri-icon-small.png",
+    "label": "Bhadradri Icon Small"
+  },
+  {
+    "value": "/assets/bhadradri-icon.png",
+    "label": "Bhadradri Icon"
+  },
+  {
+    "value": "/assets/chatbot-icon.png",
+    "label": "Chatbot Icon"
+  },
+  {
     "value": "/assets/coffee.png",
     "label": "Coffee"
   },
