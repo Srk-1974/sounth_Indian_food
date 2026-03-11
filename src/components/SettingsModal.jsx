@@ -1,16 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { FaTimes, FaSave, FaCog } from 'react-icons/fa';
+import { FaTimes, FaSave, FaCog, FaWhatsapp } from 'react-icons/fa';
 
-const SettingsModal = ({ currentVpa, onSave, onClose, currentCurrency, onSaveCurrency }) => {
+const SettingsModal = ({ currentVpa, onSave, onClose, currentCurrency, onSaveCurrency, currentWhatsApp, onSaveWhatsApp }) => {
     const [vpa, setVpa] = useState('');
     const [currencyCode, setCurrencyCode] = useState('INR');
+    const [whatsappNumber, setWhatsappNumber] = useState('');
 
     useEffect(() => {
         setVpa(currentVpa);
         if (currentCurrency) {
             setCurrencyCode(currentCurrency.code);
         }
-    }, [currentVpa, currentCurrency]);
+        if (currentWhatsApp) {
+            setWhatsappNumber(currentWhatsApp);
+        }
+    }, [currentVpa, currentCurrency, currentWhatsApp]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -21,6 +25,13 @@ const SettingsModal = ({ currentVpa, onSave, onClose, currentCurrency, onSaveCur
             ? { code: 'USD', symbol: '$', rate: 84 }
             : { code: 'INR', symbol: '₹', rate: 1 };
         onSaveCurrency(newCurrency);
+
+        // Handle WhatsApp save
+        if (onSaveWhatsApp) {
+            onSaveWhatsApp(whatsappNumber);
+        }
+
+        onClose();
     };
 
     return (
@@ -39,6 +50,18 @@ const SettingsModal = ({ currentVpa, onSave, onClose, currentCurrency, onSaveCur
                             required
                         />
                         <small className="hint-text">This ID will be used to generate the QR code for payments.</small>
+                    </div>
+
+                    <div className="form-group">
+                        <label><FaWhatsapp /> WhatsApp Business Number</label>
+                        <input
+                            type="text"
+                            value={whatsappNumber}
+                            onChange={(e) => setWhatsappNumber(e.target.value)}
+                            placeholder="e.g. +919876543210"
+                            required
+                        />
+                        <small className="hint-text">Include country code (e.g. +91 for India). Orders will be sent to this number.</small>
                     </div>
 
                     <div className="form-group">

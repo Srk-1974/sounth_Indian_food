@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Great+Vibes&display=swap');
 
 :root {
   --primary: #FF9933;
@@ -50,6 +50,14 @@ body.dark-mode .search-input,
 body.dark-mode .category-tab,
 body.dark-mode .category-selector,
 body.dark-mode .image-selector,
+body.dark-mode .add-item-section {
+  background: linear-gradient(135deg, #3e2723 0%, #4e342e 100%);
+  border-color: #ff9800;
+  box-shadow: 0 8px 24px rgba(255, 152, 0, 0.2);
+  color: #fff;
+  /* White text for visibility */
+}
+
 body.dark-mode .add-form input,
 body.dark-mode .form-group input {
   background: var(--input-bg);
@@ -125,6 +133,21 @@ body {
   padding: 40px;
   box-shadow: var(--shadow);
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login-card form {
+  width: 100%;
+}
+
+.login-icon {
+  width: 100px;
+  height: auto;
+  margin-bottom: 15px;
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .login-card h2 {
@@ -212,8 +235,20 @@ body {
   align-items: center;
 }
 
-.menu-header h1 {
-  font-size: 1.8rem;
+.app-main-title {
+  font-family: 'Great Vibes', cursive;
+  font-size: 4rem;
+  color: #800020 !important;
+  /* Deep Burgundy/Maroon */
+  text-shadow: 2px 2px 0px rgba(255, 255, 255, 0.8), 0 4px 15px rgba(0, 0, 0, 0.2) !important;
+  padding: 5px;
+  letter-spacing: 1px;
+  font-weight: 700;
+  background: none !important;
+  -webkit-background-clip: border-box !important;
+  background-clip: border-box !important;
+  -webkit-text-fill-color: initial !important;
+  margin: 0;
 }
 
 .logo-container {
@@ -344,11 +379,52 @@ body {
 }
 
 .add-item-section {
-  background: #f9f9f9;
-  padding: 20px;
-  border-radius: 15px;
+  background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+  padding: 25px;
+  border-radius: 12px;
   margin-bottom: 30px;
-  border: 1px dashed #ccc;
+  border: 3px solid #ff9800;
+  box-shadow: 0 8px 24px rgba(255, 152, 0, 0.3);
+  position: relative;
+}
+
+.add-item-section::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  background: linear-gradient(45deg, #ff6b35, #ffa500, #ff6b35);
+  border-radius: 12px;
+  z-index: -1;
+  opacity: 0.5;
+  animation: borderGlow 2s ease-in-out infinite;
+}
+
+.add-item-section::after {
+  content: '🔒 ADMIN SECTION';
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: #ff6b35;
+  opacity: 0.5;
+  pointer-events: none;
+  letter-spacing: 2px;
+}
+
+@keyframes borderGlow {
+
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+
+  50% {
+    opacity: 0.8;
+  }
 }
 
 .add-item-section h3 {
@@ -471,7 +547,91 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  align-items: center;
   width: 100%;
+  position: relative;
+  /* Added for smoke positioning */
+}
+
+.item-smoke-container {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 60px;
+  pointer-events: none;
+  z-index: 100;
+  /* Increased z-index */
+}
+
+.item-smoke-container .smoke {
+  position: absolute;
+  bottom: 0;
+  width: 30px;
+  /* Good visible size */
+  height: 30px;
+  /* Dense white steam with shadow */
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0) 70%);
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+  border-radius: 50%;
+  opacity: 0;
+  filter: blur(5px);
+  animation: denseSmokeSmall 2.5s infinite ease-out;
+}
+
+.item-smoke-container .s1 {
+  left: 10px;
+  animation-delay: 0s;
+}
+
+.item-smoke-container .s2 {
+  left: 25px;
+  animation-delay: 0.5s;
+}
+
+.item-smoke-container .s3 {
+  left: 40px;
+  animation-delay: 1.0s;
+}
+
+.item-smoke-container .s4 {
+  left: 18px;
+  animation-delay: 1.5s;
+}
+
+.item-smoke-container .s5 {
+  left: 32px;
+  animation-delay: 2.0s;
+}
+
+/* Specific style for Idly (Gray Smoke) */
+.item-smoke-container.gray-smoke .smoke {
+  background: radial-gradient(circle, rgba(120, 120, 120, 0.9) 0%, rgba(180, 180, 180, 0) 70%);
+}
+
+@keyframes denseSmokeSmall {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 0.9;
+  }
+
+  30% {
+    opacity: 0.8;
+  }
+
+  60% {
+    opacity: 0.6;
+  }
+
+  100% {
+    transform: translateY(-100px) scale(4);
+    opacity: 0;
+  }
 }
 
 .food-image {
@@ -1445,4 +1605,756 @@ body.dark-mode .quick-reply-btn {
 body.dark-mode .quick-reply-btn:hover {
   background: var(--primary);
   color: white;
+}
+
+/* WhatsApp Button */
+.whatsapp-btn {
+  background: #25D366;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+  transition: all 0.3s;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+.whatsapp-btn:hover {
+  background: #128C7E;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+}
+
+.whatsapp-btn svg {
+  font-size: 1.2rem;
+}
+
+body.dark-mode .whatsapp-btn {
+  background: #25D366;
+}
+
+body.dark-mode .whatsapp-btn:hover {
+  background: #128C7E;
+}
+
+.whatsapp-menu-btn {
+  background: #075E54;
+  margin-bottom: 5px;
+}
+
+.whatsapp-menu-btn:hover {
+  background: #054d44;
+}
+
+.whatsapp-menu-header-btn {
+  background: #25D366;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+}
+
+.whatsapp-menu-header-btn:hover {
+  background: #128C7E;
+  transform: scale(1.1);
+}
+
+body.dark-mode .whatsapp-menu-header-btn {
+  background: #25D366;
+}
+
+body.dark-mode .whatsapp-menu-header-btn:hover {
+  background: #128C7E;
+}
+
+/* About Modal */
+.about-modal {
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.about-header {
+  text-align: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid var(--primary);
+}
+
+.about-small-logo {
+  width: 80px;
+  height: auto;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.logo-subtitle {
+  font-size: 0.75rem;
+  color: #666;
+  margin: -10px 0 15px 0;
+  font-style: italic;
+}
+
+body.dark-mode .logo-subtitle {
+  color: #aaa;
+}
+
+.about-header h2 {
+  margin: 0 0 10px 0;
+  color: var(--primary);
+  font-size: 1.8rem;
+}
+
+.about-subtitle {
+  color: #666;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.about-content {
+  padding: 0 10px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.stat-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+}
+
+.stat-icon {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.status-badge {
+  background: #12b300;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 25px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.tech-stack {
+  margin-bottom: 25px;
+}
+
+.tech-stack h3 {
+  margin: 0 0 15px 0;
+  color: var(--primary);
+}
+
+.tech-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.tech-tag {
+  background: var(--primary);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.features-list {
+  margin-bottom: 20px;
+}
+
+.features-list h3 {
+  margin: 0 0 15px 0;
+  color: var(--primary);
+}
+
+.features-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.features-list li {
+  padding: 8px 0;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.about-footer {
+  border-top: 2px solid #eee;
+  padding-top: 20px;
+  margin-top: 20px;
+}
+
+.copyright {
+  text-align: center;
+  font-style: italic;
+}
+
+.copyright p {
+  margin: 5px 0;
+  color: #666;
+  font-weight: 600;
+}
+
+.rights {
+  font-size: 0.85rem;
+  font-weight: normal !important;
+  color: #999 !important;
+}
+
+/* Dark Mode for About Modal */
+body.dark-mode .about-subtitle {
+  color: #aaa;
+}
+
+body.dark-mode .features-list li {
+  color: #ddd;
+}
+
+body.dark-mode .about-footer {
+  border-top-color: #444;
+}
+
+body.dark-mode .copyright p {
+  color: #aaa;
+}
+
+body.dark-mode .rights {
+  color: #777 !important;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .about-modal {
+    max-width: 95%;
+    margin: 20px auto;
+  }
+}
+
+/* Admin Password Protection */
+.admin-unlock-form {
+  text-align: center;
+  padding: 30px 20px;
+}
+
+.unlock-message {
+  margin-bottom: 25px;
+}
+
+.unlock-message p {
+  margin: 8px 0;
+  font-size: 1.1rem;
+}
+
+.unlock-message p:first-child {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.unlock-hint {
+  color: #666;
+  font-size: 0.95rem !important;
+}
+
+.password-input-group {
+  display: flex;
+  gap: 10px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.admin-password-input {
+  flex: 1;
+  padding: 12px 16px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s;
+}
+
+.admin-password-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+}
+
+.unlock-btn {
+  padding: 12px 30px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.unlock-btn:hover {
+  background: #e55a2b;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+}
+
+.admin-unlocked-badge {
+  background: linear-gradient(135deg, #12b300 0%, #0a8000 100%);
+  color: white;
+  padding: 15px 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(18, 179, 0, 0.2);
+}
+
+.lock-btn {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.3s;
+}
+
+.lock-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+/* Dark Mode for Admin Section */
+body.dark-mode .unlock-hint {
+  color: #aaa;
+}
+
+body.dark-mode .admin-password-input {
+  background: #2a2a2a;
+  border-color: #444;
+  color: #fff;
+}
+
+body.dark-mode .admin-password-input:focus {
+  border-color: var(--primary);
+}
+
+/* Custom Password Modal */
+.password-modal {
+  max-width: 450px;
+  text-align: center;
+}
+
+.password-modal-header {
+  margin-bottom: 30px;
+}
+
+.lock-icon {
+  font-size: 3rem;
+  color: var(--primary);
+  margin-bottom: 15px;
+}
+
+.password-modal-header h2 {
+  margin: 10px 0;
+  color: var(--primary);
+  font-size: 1.5rem;
+}
+
+.password-modal-subtitle {
+  color: #666;
+  font-size: 1rem;
+  margin-top: 8px;
+}
+
+.password-modal-form {
+  margin-top: 20px;
+}
+
+.password-input-wrapper {
+  margin-bottom: 25px;
+}
+
+.password-modal-input {
+  width: 100%;
+  padding: 15px 20px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  transition: all 0.3s;
+  text-align: center;
+  letter-spacing: 2px;
+}
+
+.password-modal-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.1);
+}
+
+.password-modal-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.cancel-btn {
+  padding: 12px 30px;
+  background: #e0e0e0;
+  color: #333;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.cancel-btn:hover {
+  background: #d0d0d0;
+}
+
+.submit-password-btn {
+  padding: 12px 30px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.submit-password-btn:hover {
+  background: #e55a2b;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+}
+
+/* Dark Mode for Password Modal */
+body.dark-mode .password-modal-subtitle {
+  color: #aaa;
+}
+
+body.dark-mode .password-modal-input {
+  background: #2a2a2a;
+  border-color: #444;
+  color: #fff;
+}
+
+body.dark-mode .cancel-btn {
+  background: #444;
+  color: #fff;
+}
+
+body.dark-mode .cancel-btn:hover {
+  background: #555;
+}
+
+/* Admin Toggle Button */
+.admin-toggle-btn {
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.9rem;
+}
+
+.admin-toggle-btn:hover {
+  background: linear-gradient(135deg, #e55a2b 0%, #e67a32 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
+}
+
+.admin-toggle-btn.active {
+  background: linear-gradient(135deg, #12b300 0%, #0a8000 100%);
+  box-shadow: 0 0 15px rgba(18, 179, 0, 0.5);
+}
+
+.admin-toggle-btn.active:hover {
+  background: linear-gradient(135deg, #0fa300 0%, #087000 100%);
+}
+
+/* Dark mode for admin toggle */
+body.dark-mode .admin-toggle-btn {
+  background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%);
+}
+
+body.dark-mode .admin-toggle-btn.active {
+  background: linear-gradient(135deg, #12b300 0%, #0a8000 100%);
+}
+
+/* Admin Button in Header */
+.admin-btn {
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3);
+}
+
+.admin-btn:hover {
+  background: linear-gradient(135deg, #e55a2b 0%, #e67a32 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.5);
+}
+
+/* Admin Modal */
+.admin-modal-content {
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.admin-modal-title {
+  text-align: center;
+  color: var(--primary);
+  margin-bottom: 20px;
+  font-size: 1.8rem;
+}
+
+.admin-modal-content .add-item-section {
+  margin-bottom: 0;
+}
+
+/* Dark mode for admin button */
+body.dark-mode .admin-btn {
+  background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%);
+  box-shadow: 0 2px 8px rgba(255, 107, 53, 0.4);
+}
+
+body.dark-mode .admin-btn:hover {
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.6);
+}
+
+/* Simplified About Modal */
+.about-modal-simple {
+  max-width: 500px;
+  text-align: center;
+  padding: 30px;
+}
+
+.about-image-container {
+  margin-bottom: 25px;
+}
+
+.about-hero-image {
+  width: 100%;
+  max-width: 350px;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.about-app-title {
+  margin: 25px 0;
+}
+
+.about-app-title h2 {
+  font-size: 1.6rem;
+  color: var(--primary);
+  margin: 0;
+}
+
+.about-footer-simple {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 2px solid #eee;
+}
+
+.copyright-text {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+  margin: 8px 0;
+}
+
+.copyright-year {
+  font-size: 0.95rem;
+  color: #666;
+  margin: 5px 0;
+}
+
+/* Dark mode for simplified about */
+body.dark-mode .about-modal-simple {
+  background: #1a1a1a;
+}
+
+body.dark-mode .about-footer-simple {
+  border-top-color: #333;
+}
+
+body.dark-mode .copyright-text {
+  color: #fff;
+}
+
+body.dark-mode .copyright-year {
+  color: #aaa;
+}
+
+/* Footer and Header Banner Italic Styles */
+.app-footer p,
+.footer-content p {
+  font-style: italic;
+}
+
+.header-banner p {
+  font-style: italic;
+}
+
+.login-copyright {
+  font-size: 0.9rem;
+  font-style: italic;
+  font-weight: bold;
+  background: linear-gradient(to right, #FF9933, #000080, #138808);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 15px;
+  margin-top: -5px;
+  letter-spacing: 0.5px;
+}
+
+/* Login Page Dense Steam Animation */
+.login-icon-container {
+  position: relative;
+  display: inline-block;
+  margin: 0 auto;
+}
+
+.smoke-container {
+  position: absolute;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  /* Wider for more particles */
+  height: 100px;
+  pointer-events: none;
+  z-index: 20;
+}
+
+.smoke-container .smoke {
+  position: absolute;
+  bottom: 0;
+  width: 35px;
+  /* Even larger */
+  height: 35px;
+  /* Lighter gray but still visible */
+  background: radial-gradient(circle, rgba(190, 190, 190, 0.9) 0%, rgba(220, 220, 220, 0) 70%);
+  border-radius: 50%;
+  opacity: 0;
+  filter: blur(6px);
+  animation: denseSmoke 3s infinite ease-out;
+}
+
+.smoke-container .s1 {
+  left: 20px;
+  animation-delay: 0s;
+}
+
+.smoke-container .s2 {
+  left: 40px;
+  animation-delay: 0.6s;
+}
+
+.smoke-container .s3 {
+  left: 60px;
+  animation-delay: 1.2s;
+}
+
+.smoke-container .s4 {
+  left: 30px;
+  animation-delay: 1.8s;
+}
+
+.smoke-container .s5 {
+  left: 50px;
+  animation-delay: 2.4s;
+}
+
+@keyframes denseSmoke {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0;
+  }
+
+  15% {
+    opacity: 0.9;
+    /* High opacity quickly */
+  }
+
+  50% {
+    opacity: 0.7;
+    /* Stay visible longer */
+  }
+
+  100% {
+    transform: translateY(-80px) scale(4);
+    /* Rise higher and larger */
+    opacity: 0;
+  }
 }

@@ -12,6 +12,14 @@
     "label": "Chatbot Icon"
   },
   {
+    "value": "/assets/chef-icon-smoky.png",
+    "label": "Chef Icon Smoky"
+  },
+  {
+    "value": "/assets/chef-icon.png",
+    "label": "Chef Icon"
+  },
+  {
     "value": "/assets/coffee.png",
     "label": "Coffee"
   },
@@ -20,24 +28,72 @@
     "label": "Dosa"
   },
   {
+    "value": "/assets/faluda.jpg",
+    "label": "Faluda"
+  },
+  {
     "value": "/assets/faluda.mp4",
     "label": "Faluda"
+  },
+  {
+    "value": "/assets/fruit-custard.jpg",
+    "label": "Fruit Custard"
   },
   {
     "value": "/assets/idly.png",
     "label": "Idly"
   },
   {
+    "value": "/assets/login-food.png",
+    "label": "Login Food"
+  },
+  {
     "value": "/assets/logo.png",
     "label": "Logo"
+  },
+  {
+    "value": "/assets/mango-juice.jpg",
+    "label": "Mango Juice"
   },
   {
     "value": "/assets/masala-vada.png",
     "label": "Masala Vada"
   },
   {
+    "value": "/assets/new-logo-v2.png",
+    "label": "New Logo V2"
+  },
+  {
+    "value": "/assets/new-logo.png",
+    "label": "New Logo"
+  },
+  {
+    "value": "/assets/pani-puri-plate.jpg",
+    "label": "Pani Puri Plate"
+  },
+  {
+    "value": "/assets/pani-puri.jpg",
+    "label": "Pani Puri"
+  },
+  {
     "value": "/assets/poori.png",
     "label": "Poori"
+  },
+  {
+    "value": "/assets/puri-chana.jpg",
+    "label": "Puri Chana"
+  },
+  {
+    "value": "/assets/showcase-video-1.mp4",
+    "label": "Showcase Video 1"
+  },
+  {
+    "value": "/assets/shree-ram.png",
+    "label": "Shree Ram"
+  },
+  {
+    "value": "/assets/south-indian-chef.png",
+    "label": "South Indian Chef"
   },
   {
     "value": "/assets/stock-1.png",
@@ -72,8 +128,28 @@
     "label": "Stock 8"
   },
   {
+    "value": "/assets/stock-food-1.jpg",
+    "label": "Stock Food 1"
+  },
+  {
+    "value": "/assets/stock-food-2.jpg",
+    "label": "Stock Food 2"
+  },
+  {
+    "value": "/assets/sunrise-icon.png",
+    "label": "Sunrise Icon"
+  },
+  {
     "value": "/assets/tea.png",
     "label": "Tea"
+  },
+  {
+    "value": "/assets/upma-sambar.jpg",
+    "label": "Upma Sambar"
+  },
+  {
+    "value": "/assets/vada-plate.jpg",
+    "label": "Vada Plate"
   },
   {
     "value": "/assets/vada.png",

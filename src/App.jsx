@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Login from './components/Login';
+import AdminDashboard from './components/AdminDashboard';
 import Menu from './components/Menu';
 import Cart from './components/Cart';
 import PaymentModal from './components/PaymentModal';
@@ -37,6 +38,7 @@ function App() {
   const [darkMode, setDarkMode] = useState(() => {
     return localStorage.getItem('darkMode') === 'true';
   });
+  const [isAdminView, setIsAdminView] = useState(false);
 
   const handleUpdateVpa = (newVpa) => {
     setMerchantVpa(newVpa);
@@ -130,50 +132,55 @@ function App() {
   return (
     <div className="app-container">
       {user ? (
-        <>
-          <div className="main-content">
-            <HeaderBanner />
-            <Menu
-              user={user}
+        isAdminView ? (
+          <AdminDashboard onBack={() => setIsAdminView(false)} />
+        ) : (
+          <>
+            <div className="main-content">
+              <HeaderBanner />
+              <Menu
+                user={user}
+                items={items}
+                onAdd={handleAddItem}
+                onDelete={handleDeleteItem}
+                onEdit={handleEditItem}
+                onAddToCart={handleAddToCart}
+                onLogout={handleLogout}
+                merchantVpa={merchantVpa}
+                onUpdateVpa={handleUpdateVpa}
+                currency={currency}
+                onUpdateCurrency={handleUpdateCurrency}
+                darkMode={darkMode}
+                toggleDarkMode={toggleDarkMode}
+                onOpenAdminDashboard={() => setIsAdminView(true)}
+              />
+              <Footer />
+            </div>
+            <Cart
+              cartItems={cart}
+              onRemove={handleRemoveFromCart}
+              onCheckout={handleCheckout}
+              currency={currency}
+            />
+            {showPayment && (
+              <PaymentModal
+                total={cartTotal}
+                onClose={() => setShowPayment(false)}
+                onPaymentSuccess={handlePaymentSuccess}
+                merchantVpa={merchantVpa}
+                currency={currency}
+              />
+            )}
+            <ChatBot
               items={items}
-              onAdd={handleAddItem}
-              onDelete={handleDeleteItem}
-              onEdit={handleEditItem}
               onAddToCart={handleAddToCart}
-              onLogout={handleLogout}
-              merchantVpa={merchantVpa}
-              onUpdateVpa={handleUpdateVpa}
               currency={currency}
-              onUpdateCurrency={handleUpdateCurrency}
-              darkMode={darkMode}
-              toggleDarkMode={toggleDarkMode}
+              cart={cart}
+              onRemoveFromCart={handleRemoveFromCart}
+              onCheckout={handleCheckout}
             />
-            <Footer />
-          </div>
-          <Cart
-            cartItems={cart}
-            onRemove={handleRemoveFromCart}
-            onCheckout={handleCheckout}
-            currency={currency}
-          />
-          {showPayment && (
-            <PaymentModal
-              total={cartTotal}
-              onClose={() => setShowPayment(false)}
-              onPaymentSuccess={handlePaymentSuccess}
-              merchantVpa={merchantVpa}
-              currency={currency}
-            />
-          )}
-          <ChatBot
-            items={items}
-            onAddToCart={handleAddToCart}
-            currency={currency}
-            cart={cart}
-            onRemoveFromCart={handleRemoveFromCart}
-            onCheckout={handleCheckout}
-          />
-        </>
+          </>
+        )
       ) : (
         <Login onLogin={handleLogin} />
       )}

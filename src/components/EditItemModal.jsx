@@ -7,6 +7,7 @@ const EditItemModal = ({ item, onSave, onClose, currency }) => {
     const [price, setPrice] = useState('');
     const [category, setCategory] = useState('Snacks');
     const [selectedImage, setSelectedImage] = useState('');
+    const [isHot, setIsHot] = useState(true);
 
     const categories = ['Breakfast', 'Lunch', 'Snacks', 'Beverages'];
 
@@ -24,6 +25,7 @@ const EditItemModal = ({ item, onSave, onClose, currency }) => {
             setCategory(item.category || 'Snacks');
             // Set current image or video or empty string
             setSelectedImage(item.video || item.image || '');
+            setIsHot(item.isHot !== undefined ? item.isHot : true);
         }
     }, [item, currency]);
 
@@ -31,7 +33,7 @@ const EditItemModal = ({ item, onSave, onClose, currency }) => {
         e.preventDefault();
         // Convert price back to base currency (INR) for saving
         const basePrice = Math.round(parseFloat(price) * currency.rate);
-        const updatedItem = { ...item, name, price: basePrice, category };
+        const updatedItem = { ...item, name, price: basePrice, category, isHot };
 
         // Reset both
         delete updatedItem.image;
@@ -102,12 +104,23 @@ const EditItemModal = ({ item, onSave, onClose, currency }) => {
                             ))}
                         </select>
                     </div>
+                    <div className="form-group">
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer' }}>
+                            <input
+                                type="checkbox"
+                                checked={isHot}
+                                onChange={(e) => setIsHot(e.target.checked)}
+                                style={{ width: 'auto' }}
+                            />
+                            {isHot ? '🔥 Hot (Show Steam)' : '❄️ Cold (No Steam)'}
+                        </label>
+                    </div>
                     <button type="submit" className="save-btn">
                         <FaSave /> Save Changes
                     </button>
                 </form>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 };
 

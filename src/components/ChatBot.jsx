@@ -4,8 +4,15 @@ import { FaTimes, FaShoppingBag, FaUtensils, FaTrash, FaCheck, FaPaperPlane } fr
 const ChatBot = ({ items, onAddToCart, currency, cart, onRemoveFromCart, onCheckout }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [view, setView] = useState('chat'); // 'chat', 'menu' or 'cart'
+    const getGreeting = () => {
+        const hour = new Date().getHours();
+        if (hour < 12) return "Good Morning";
+        if (hour < 18) return "Good Afternoon";
+        return "Good Evening";
+    };
+
     const [messages, setMessages] = useState([
-        { text: "Hello! 👋 I'm your food assistant. What would you like to eat today?", sender: 'bot' }
+        { text: `${getGreeting()}! 👋 I'm your food assistant. What would you like to eat today?`, sender: 'bot' }
     ]);
     const [userInput, setUserInput] = useState('');
     const [isTyping, setIsTyping] = useState(false);
@@ -41,13 +48,28 @@ const ChatBot = ({ items, onAddToCart, currency, cart, onRemoveFromCart, onCheck
     }, []);
 
     const handleMouseDown = (e) => {
-        // Disable drag on mobile/touch devices
-        if (isMobile) {
-            return;
-        }
         setIsDragging(true);
         setDragStart({ x: e.clientX - position.x, y: e.clientY - position.y });
         setHasMoved(false);
+    };
+
+    const handleTouchStart = (e) => {
+        setIsDragging(true);
+        setDragStart({ x: e.touches[0].clientX - position.x, y: e.touches[0].clientY - position.y });
+        setHasMoved(false);
+    };
+
+    const handleTouchMove = (e) => {
+        if (isDragging) {
+            const newX = e.touches[0].clientX - dragStart.x;
+            const newY = e.touches[0].clientY - dragStart.y;
+            setPosition({ x: newX, y: newY });
+            setHasMoved(true);
+        }
+    };
+
+    const handleTouchEnd = () => {
+        setIsDragging(false);
     };
 
     const handleMouseMove = (e) => {
@@ -101,12 +123,13 @@ const ChatBot = ({ items, onAddToCart, currency, cart, onRemoveFromCart, onCheck
         if (containsKeyword(msg, ['breakfast', 'morning'])) {
             const breakfastItems = items.filter(item => item.category === 'Breakfast');
             if (breakfastItems.length > 0) {
-                return `Great choice! For breakfast, we have ${breakfastItems.map(i => i.name).join(', ')}. What would you like? 🌅`;
+                const itemsList = breakfastItems.map(item => `• ${item.name} - ${currency.symbol}${Math.round(item.price / currency.rate)}`).join('\n');
+                return `🌅 Good morning! Here are our delicious breakfast items:\n\n${itemsList}\n\nPerfect way to start your day! 😊`;
             }
         }
 
         if (containsKeyword(msg, ['spicy', 'hot', 'chili'])) {
-            return "If you like spicy, I recommend our Vada! It's crispy and has a nice kick. Want to try it? 🌶️";
+            return "🌶️ Looking for something spicy? **Bajji** is available and it's perfectly spiced! You can find it in our Snacks section. Want to try it? 🔥";
         }
 
         if (containsKeyword(msg, ['sweet', 'dessert'])) {
@@ -122,8 +145,8 @@ const ChatBot = ({ items, onAddToCart, currency, cart, onRemoveFromCart, onCheck
             return `Our most affordable option is ${cheapest.name} at ${currency.symbol}${Math.round(cheapest.price / currency.rate)}. Great value! 💰`;
         }
 
-        if (containsKeyword(msg, ['popular', 'best', 'recommend'])) {
-            return "Our most popular items are Idly and Dosa! They're customer favorites. Want to try one? ⭐";
+        if (containsKeyword(msg, ['popular', 'best', 'recommend', 'delicious', 'good'])) {
+            return "😋 All our items are absolutely delicious! But if I had to pick favorites:\n\n🌟 **IDLY** - Soft, fluffy, healthy!\n🌟 **DOSA** - Crispy golden perfection!\n🌟 **VADA** - Crunchy outside, soft inside!\n\nYou really can't go wrong with anything on our menu! 💯";
         }
 
         if (containsKeyword(msg, ['drink', 'beverage', 'tea', 'coffee'])) {
@@ -134,7 +157,8 @@ const ChatBot = ({ items, onAddToCart, currency, cart, onRemoveFromCart, onCheck
         if (containsKeyword(msg, ['snack', 'light'])) {
             const snacks = items.filter(item => item.category === 'Snacks');
             if (snacks.length > 0) {
-                return `For snacks, try our ${snacks.map(i => i.name).join(' or ')}! 🍪`;
+                const itemsList = snacks.map(item => `• ${item.name} - ${currency.symbol}${Math.round(item.price / currency.rate)}`).join('\n');
+                return `🍪 Perfect for snack time! Here are our crispy delights:\n\n${itemsList}\n\nCrunchy and delicious! 😋`;
             }
         }
 
@@ -188,9 +212,9 @@ const ChatBot = ({ items, onAddToCart, currency, cart, onRemoveFromCart, onCheck
 
     const quickReplies = [
         "Show breakfast items",
-        "What's popular?",
-        "I'm hungry",
-        "Something spicy"
+        "Show snacks",
+        "What's spicy?",
+        "What's most delicious?"
     ];
 
     return (
@@ -204,6 +228,9 @@ const ChatBot = ({ items, onAddToCart, currency, cart, onRemoveFromCart, onCheck
                 right: 'auto'
             }}
             onMouseDown={handleMouseDown}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
         >
             {isOpen && (
                 <div className="chatbot-window" onMouseDown={(e) => e.stopPropagation()}>
@@ -228,7 +255,7 @@ const ChatBot = ({ items, onAddToCart, currency, cart, onRemoveFromCart, onCheck
                             </div>
                         )}
 
-                        {view === 'chat' && messages.length === 1 && (
+                        {view === 'chat' && (
                             <div className="quick-replies">
                                 {quickReplies.map((reply, idx) => (
                                     <button
@@ -325,13 +352,15 @@ const ChatBot = ({ items, onAddToCart, currency, cart, onRemoveFromCart, onCheck
                 <img src="/assets/chatbot-icon.png" alt="Chat" className="bot-icon-large animated-bot" />
                 {cart.length > 0 && <span className="chat-badge">{cart.length}</span>}
             </button>
-            {!isOpen && (
-                <div className="chatbot-tooltip">
-                    Hello! 👋 I'm your food assistant. What would you like to eat today?
-                    <div className="tooltip-arrow"></div>
-                </div>
-            )}
-        </div>
+            {
+                !isOpen && (
+                    <div className="chatbot-tooltip">
+                        {getGreeting()}! 👋 I'm your food assistant. What would you like to eat today?
+                        <div className="tooltip-arrow"></div>
+                    </div>
+                )
+            }
+        </div >
     );
 };
 
