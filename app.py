@@ -29,7 +29,8 @@ def img_tag(path: Path, style: str = "", alt: str = "") -> str:
     return ""
 
 # Pre-load key images
-LOGO_B64       = img_b64(ASSETS / "logo.png")
+LOGO_B64        = img_b64(ASSETS / "logo.png")
+BADRADRI_B64    = img_b64(ASSETS / "bhadradri-icon-small.png")
 CHEF_B64       = img_b64(ASSETS / "south-indian-chef.png")
 SUNRISE_B64    = img_b64(ASSETS / "sunrise-icon.png")
 LOGIN_FOOD_B64 = img_b64(ASSETS / "login-food.png")
@@ -71,16 +72,74 @@ st.markdown(f"""
 html, body, [class*="css"] {{ font-family: 'Poppins', sans-serif; }}
 
 /* ---- Top banner ---- */
+/* ---- Top banner ---- */
 .top-banner {{
-    background: linear-gradient(90deg, #4B0082, #6A0DAD);
-    color: white;
-    text-align: center;
-    padding: 8px;
-    font-size: 0.88rem;
-    border-radius: 8px;
+    width: 100%;
+    background: blueviolet;
+    padding: 5px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: 10px;
     margin-bottom: 16px;
-    letter-spacing: 0.5px;
+    overflow: hidden;
 }}
+.banner-icon {{
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+    background: white;
+    border-radius: 50%;
+    padding: 2px;
+    flex-shrink: 0;
+}}
+.banner-text {{
+    font-size: 0.78rem;
+    color: white;
+    font-weight: 500;
+    font-style: italic;
+    margin: 0;
+    white-space: nowrap;
+    animation: marqueeScroll 18s linear infinite;
+}}
+@keyframes marqueeScroll {{
+    0%   {{ transform: translateX(60%); }}
+    100% {{ transform: translateX(-100%); }}
+}}
+/* ---- Smoke animation ---- */
+@keyframes denseSmokeSmall {{
+    0%   {{ transform: translateY(0) scale(1); opacity: 0; }}
+    10%  {{ opacity: 0.85; }}
+    60%  {{ opacity: 0.5; }}
+    100% {{ transform: translateY(-70px) scale(3.5); opacity: 0; }}
+}}
+.smoke-wrap {{
+    position: absolute;
+    bottom: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 60px;
+    pointer-events: none;
+    z-index: 10;
+}}
+.smokey {{
+    position: absolute;
+    bottom: 0;
+    width: 28px;
+    height: 28px;
+    background: radial-gradient(circle, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0) 70%);
+    border-radius: 50%;
+    opacity: 0;
+    filter: blur(4px);
+    animation: denseSmokeSmall 2.5s infinite ease-out;
+}}
+.s1 {{ left: 8px;  animation-delay: 0s;   }}
+.s2 {{ left: 22px; animation-delay: 0.5s; }}
+.s3 {{ left: 36px; animation-delay: 1.0s; }}
+.s4 {{ left: 15px; animation-delay: 1.5s; }}
+.s5 {{ left: 28px; animation-delay: 2.0s; }}
 
 /* ---- Header ---- */
 .app-header {{
@@ -311,10 +370,12 @@ if not st.session_state["logged_in"]:
 # MAIN APP
 # ─────────────────────────────────────────────────────────────────────────────
 
-# Top purple banner
-st.markdown("""
+# Top banner — Bhadradri icon + marquee text
+bhadradri_icon = f'<img src="{BADRADRI_B64}" class="banner-icon" alt="Bhadradri">' if BADRADRI_B64 else ''
+st.markdown(f"""
 <div class="top-banner">
-    🌟 &nbsp; This project @ designed by Bhadradri Technologies.inc
+    {bhadradri_icon}
+    <p class="banner-text">This project @ designed by Bhadradri Technologies.Inc</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -444,9 +505,24 @@ else:
                 else:
                     img_html = '<div style="width:100%;height:160px;background:#ffe0b2;display:flex;align-items:center;justify-content:center;font-size:3rem;border-radius:14px 14px 0 0;">🍛</div>'
 
+                # Steam smoke for hot items
+                smoke_html = ""
+                if item.get("hot"):
+                    smoke_html = """
+                    <div class="smoke-wrap">
+                        <div class="smokey s1"></div>
+                        <div class="smokey s2"></div>
+                        <div class="smokey s3"></div>
+                        <div class="smokey s4"></div>
+                        <div class="smokey s5"></div>
+                    </div>"""
+
                 st.markdown(f"""
                 <div class="food-card">
-                    {img_html}
+                    <div style="position:relative;">
+                        {img_html}
+                        {smoke_html}
+                    </div>
                     <h3>{item['name']}</h3>
                     <span class="cat-badge">{item['category']}</span>
                     <p class="price">{SYM} {item['price']}</p>
