@@ -2,6 +2,9 @@ import streamlit as st
 import base64
 from pathlib import Path
 from datetime import datetime
+import qrcode
+from io import BytesIO
+from PIL import Image
 
 # ── Page config ───────────────────────────────────────────────────────────────
 st.set_page_config(
@@ -46,6 +49,16 @@ def get_food_img(name: str) -> str:
         p = ASSETS / stock
         if p.exists(): return img_b64(p)
     return ""
+
+# ── QR Code Generator ─────────────────────────────────────────────────────────
+def generate_upi_qr(upi_link):
+    qr = qrcode.QRCode(version=1, box_size=10, border=5)
+    qr.add_data(upi_link)
+    qr.make(fit=True)
+    img = qr.make_image(fill_color="#800020", back_color="white")
+    buf = BytesIO()
+    img.save(buf, format="PNG")
+    return buf.getvalue()
 
 # ── SVG Smoke Animation ───────────────────────────────────────────────────────
 SMOKE_SVG = '<div class="smoke-container"><svg viewBox="0 0 100 100" class="smoke-svg"><circle class="p1" cx="50" cy="80" r="10" /><circle class="p2" cx="40" cy="85" r="12" /><circle class="p3" cx="60" cy="82" r="11" /><circle class="p4" cx="45" cy="88" r="9" /><circle class="p5" cx="55" cy="84" r="10" /></svg></div>'
@@ -133,6 +146,7 @@ if "username" not in st.session_state: st.session_state["username"] = ""
 if "cart" not in st.session_state: st.session_state["cart"] = {}
 if "admin_mode" not in st.session_state: st.session_state["admin_mode"] = False
 if "chat_open" not in st.session_state: st.session_state["chat_open"] = False
+if "show_payment" not in st.session_state: st.session_state["show_payment"] = False
 if "messages" not in st.session_state: 
     h = datetime.now().hour
     g = "Good Morning" if h < 12 else "Good Afternoon" if h < 18 else "Good Evening"
@@ -243,7 +257,52 @@ with st.sidebar:
             total += sub
             st.write(f"**{it['name']}** x {it['qty']} - ₹{sub}")
         st.markdown(f"### Total: ₹{total}")
-        if st.button("Confirm Order 🍛", type="primary"): st.balloons()
+        if st.button("Confirm Order 🍛", type="primary", use_container_width=True):
+            st.session_state["show_payment"] = True
+            st.rerun()
+
+# ── PAYMENT MODAL (Overlay) ──
+if st.session_state["show_payment"]:
+    st.markdown("---")
+    st.markdown('<div style="background:#fff3e0; padding:25px; border-radius:16px; border:2px solid #FF9933; margin-top:20px;">', unsafe_allow_html=True)
+    st.markdown('<h2 style="color:#800020; text-align:center; margin-bottom:20px;">🛡️ Payment Gateway</h2>', unsafe_allow_html=True)
+    
+    pay_col1, pay_col2 = st.columns([1.2, 1])
+    
+    with pay_col1:
+        st.markdown("### 🧾 Order Summary")
+        total_p = 0
+        for iid, item in st.session_state["cart"].items():
+            sub = item['price'] * item['qty']
+            total_p += sub
+            st.markdown(f"• **{item['name']}** x {item['qty']} <span style='float:right;'>₹{sub}</span>", unsafe_allow_html=True)
+        st.markdown(f"<div style='border-top:2px solid #FF9933; margin-top:10px; padding-top:10px; font-size:1.5rem; font-weight:800; color:#FF6600;'>Total: ₹{total_p}</div>", unsafe_allow_html=True)
+        
+    with pay_col2:
+        st.markdown('<div style="background:white; padding:15px; border-radius:12px; text-align:center;">', unsafe_allow_html=True)
+        st.markdown("### 🏧 Pay via UPI")
+        upi_vpa = "merchant@upi"
+        upi_link = f"upi://pay?pa={upi_vpa}&pn=SouthIndianDelights&am={total_p}&cu=INR"
+        qr_img = generate_upi_qr(upi_link)
+        st.image(qr_img, width=220, caption="Scan with GPay, PhonePe, or Paytm")
+        st.markdown(f"**Merchant:** `SouthIndianDelights`")
+        st.markdown(f"**UPI ID:** `{upi_vpa}`")
+        st.markdown('</div>', unsafe_allow_html=True)
+        
+    st.markdown("---")
+    b1, b2 = st.columns(2)
+    with b1:
+        if st.button("❌ Cancel Payment", use_container_width=True):
+            st.session_state["show_payment"] = False
+            st.rerun()
+    with b2:
+        if st.button("✅ I HAVE PAID", type="primary", use_container_width=True):
+            st.balloons()
+            st.success("💰 Payment Confirmed! Your order is being prepared.")
+            st.session_state["cart"] = {}
+            st.session_state["show_payment"] = False
+            st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # ── FLOATING CHATBOT (Purely Visual Bubble with Active Chat) ──
 h_now = datetime.now().hour
