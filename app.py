@@ -224,7 +224,7 @@ with btn1:
     if st.button("🔐 Admin", use_container_width=True): st.session_state["admin_mode"] = not st.session_state["admin_mode"]
 with btn2:
     sh_toggle = st.toggle("🎬 Showcase", False)
-with b4:
+with btn4:
     if st.button("Logout 🚪", use_container_width=True): st.session_state["logged_in"] = False; st.rerun()
 
 if sh_toggle:
