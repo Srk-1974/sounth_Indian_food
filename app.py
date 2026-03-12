@@ -27,7 +27,6 @@ def img_b64(path: Path) -> str:
     return ""
 
 BHADRADRI_B64    = img_b64(ASSETS / "bhadradri-icon-small.png")
-# CORRECTION: Using chatbot-icon.png as the Lady Chef Mascot requested
 CHEF_B64         = img_b64(ASSETS / "chatbot-icon.png")
 SUNRISE_B64      = img_b64(ASSETS / "sunrise-icon.png")
 LOGIN_FOOD_B64   = img_b64(ASSETS / "login-food.png")
@@ -59,18 +58,6 @@ st.markdown(f"""
 @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600;700&display=swap');
 html, body, [class*="css"] {{ font-family: 'Poppins', sans-serif; }}
 
-/* BANNER & HEADER */
-.top-banner {{
-    width:100%; height:32px; background:blueviolet; padding:0 12px;
-    display:flex; align-items:center; gap:10px; border-radius:10px; margin-bottom:12px; overflow:hidden;
-}}
-.marquee-box {{ flex:1; overflow:hidden; white-space:nowrap; }}
-.banner-text {{
-    display:inline-block; font-size:0.8rem; color:white; font-weight:500; font-style:italic;
-    animation: marqueeScroll 25s linear infinite; margin:0; padding-left:100%;
-}}
-@keyframes marqueeScroll {{ 0% {{ transform:translateX(0); }} 100% {{ transform:translateX(-100%); }} }}
-
 .app-header {{
     background:linear-gradient(135deg,#FF9933 0%,#FF7700 100%);
     padding:12px 20px; border-radius:16px; margin-bottom:20px;
@@ -79,7 +66,6 @@ html, body, [class*="css"] {{ font-family: 'Poppins', sans-serif; }}
 .header-logo {{ width:70px; height:70px; border-radius:50%; border:3px solid white; object-fit:cover; }}
 .header-title {{ font-family:'Great Vibes', cursive; font-size:3.5rem; color:#800020; margin:0; font-weight:700; }}
 
-/* FOOD CARDS */
 .food-card {{
     background:white; border:2px solid #FF9933; border-radius:18px; padding:0 0 12px 0; overflow:hidden; text-align:center;
     box-shadow:0 6px 15px rgba(0,0,0,0.08); transition:0.3s; height:100%; margin-bottom:10px;
@@ -88,49 +74,53 @@ html, body, [class*="css"] {{ font-family: 'Poppins', sans-serif; }}
 .img-wrap {{ position:relative; width:100%; height:150px; background:#f5f5f5; }}
 .card-img {{ width:100%; height:100%; object-fit:cover; }}
 
-/* === THE ONLY FLOATING BOT (FIXED VISUALS & ALIGNMENT) === */
+/* === THE ALIGNED FLOATING BOT HUB === */
 .chatbot-fixed-hub {{
     position: fixed; bottom: 30px; right: 30px; z-index: 100000;
-    display: flex; flex-direction: column; align-items: flex-end; gap: 0px;
+    display: flex; flex-direction: column; align-items: flex-end; gap: 5px;
 }}
 
-/* Greeting Bubble Styling */
-.greeting-fixed {{
-    background: white; padding: 12px 18px; border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2); font-size: 0.85rem;
-    color: #333; max-width: 220px; text-align: center; border: 1px solid #ddd;
-    margin-bottom: 12px; position: relative; animation: fadeIn 0.5s ease-out;
+/* Greeting Tooltip */
+.greeting-bubble {{
+    background: white; padding: 10px 15px; border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2); font-size: 0.8rem;
+    color: #333; max-width: 200px; text-align: center; border: 1px solid #ddd;
+    position: relative; animation: fadeIn 0.5s ease;
 }}
-.greeting-fixed::after {{
+.greeting-bubble::after {{
     content: ''; position: absolute; bottom: -8px; right: 35px;
     width: 0; height: 0; border-left: 8px solid transparent;
     border-right: 8px solid transparent; border-top: 8px solid white;
 }}
 
-/* AGGRESSIVE CSS TO TURN POPOVER INTO MASCOT */
+/* REFACTORED POPOVER: Panel below the image */
 div[data-testid="stPopover"] {{
     bottom: 5px; right: 0; position: relative;
 }}
-/* Target the actual button element */
 div[data-testid="stPopover"] button {{
     background-image: url("{CHEF_B64}") !important;
     background-size: cover !important;
     background-position: center !important;
     background-color: white !important;
-    width: 95px !important;
-    height: 95px !important;
+    width: 90px !important;
+    height: 90px !important;
     border-radius: 50% !important;
     border: 4px solid white !important;
     box-shadow: 0 10px 30px rgba(0,0,0,0.4) !important;
     animation: bounceChef 2s infinite ease-in-out !important;
     color: transparent !important;
-    margin-top: 10px !important;
 }}
-div[data-testid="stPopover"] button div {{
-    display: none !important;
+div[data-testid="stPopover"] button div {{ display: none !important; }}
+
+/* Alignment of the Chat Panel */
+[data-testid="stPopoverContent"] {{
+    margin-right: -10px !important;
+    border: 2px solid #FF9933 !important;
+    border-radius: 20px !important;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2) !important;
 }}
 
-@keyframes bounceChef {{ 0%, 100% {{ transform:translateY(0); }} 50% {{ transform:translateY(-12px); }} }}
+@keyframes bounceChef {{ 0%, 100% {{ transform:translateY(0); }} 50% {{ transform:translateY(-10px); }} }}
 @keyframes fadeIn {{ from {{ opacity:0; transform:translateY(10px); }} to {{ opacity:1; transform:translateY(0); }} }}
 
 .payment-box {{ background:#fff3e0; padding:30px; border-radius:24px; border:4px solid #FF9933; margin:20px 0; }}
@@ -143,8 +133,8 @@ if "cart" not in st.session_state: st.session_state["cart"] = {}
 if "show_payment" not in st.session_state: st.session_state["show_payment"] = False
 if "messages" not in st.session_state:
     now = datetime.now()
-    greet = "Good Morning" if now.hour < 12 else "Good Afternoon" if now.hour < 18 else "Good Evening"
-    st.session_state["messages"] = [{"role": "assistant", "content": f"{greet}! 👋 I'm your food assistant. What would you like to eat today?"}]
+    greet_text = "Good Morning" if now.hour < 12 else "Good Afternoon" if now.hour < 18 else "Good Evening"
+    st.session_state["messages"] = [{"role": "assistant", "content": f"{greet_text}! 👋 I'm your food assistant. What would you like to eat today?"}]
 
 if "menu" not in st.session_state:
     st.session_state["menu"] = [
@@ -157,12 +147,12 @@ if "menu" not in st.session_state:
 # ── LOGIN ──
 if not st.session_state["logged_in"]:
     st.markdown(f'<div style="text-align:center; padding-top:100px;"><div style="width:120px;height:120px;border-radius:50%;border:4px solid #FF9933;background:white url(\'{CHEF_B64}\') center/cover;margin:0 auto;"></div><h1 style="color:#800020;">Welcome</h1></div>', unsafe_allow_html=True)
-    _, lcol, _ = st.columns([1,1.2,1])
-    with lcol:
-        u = st.text_input("Username")
-        p = st.text_input("Password", type="password")
+    _, login_inner, _ = st.columns([1,1.2,1])
+    with login_inner:
+        u_in = st.text_input("Username")
+        p_in = st.text_input("Password", type="password")
         if st.button("LOGIN", use_container_width=True):
-            if p == "Admin123":
+            if p_in == "Admin123":
                 st.session_state["logged_in"] = True; st.rerun()
     st.stop()
 
@@ -174,19 +164,19 @@ st.markdown(f'<div class="app-header">{logo_img}<h1 class="header-title">South I
 if st.session_state["show_payment"]:
     st.markdown('<div class="payment-box">', unsafe_allow_html=True)
     st.markdown('<h2 style="text-align:center; color:#800020;">Secure Checkout</h2>', unsafe_allow_html=True)
-    tot = sum(it['price']*it['qty'] for it in st.session_state["cart"].values())
-    st.image(generate_upi_qr(f"upi://pay?pa=m@upi&am={tot}"), width=180)
-    if st.button("✅ PAID", type="primary", use_container_width=True):
+    current_tot = sum(it['price']*it['qty'] for it in st.session_state["cart"].values())
+    st.image(generate_upi_qr(f"upi://pay?pa=m@upi&am={current_tot}"), width=180)
+    if st.button("✅ I HAVE PAID", type="primary", use_container_width=True):
         st.balloons(); st.session_state["cart"] = {}; st.session_state["show_payment"] = False; st.rerun()
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ── MENU ──
-mcols = st.columns(4)
+m_cols = st.columns(4)
 for i, item in enumerate(st.session_state["menu"]):
-    with mcols[i % 4]:
-        img_s = get_food_img(item["name"])
-        img_t = f'<img src="{img_s}" class="card-img">' if img_s else "🍛"
-        st.markdown(f'<div class="food-card"><div class="img-wrap">{img_t}</div><h3>{item["name"]}</h3><div class="price-tag">₹{item["price"]}</div></div>', unsafe_allow_html=True)
+    with m_cols[i % 4]:
+        img_src = get_food_img(item["name"])
+        img_tag = f'<img src="{img_src}" class="card-img">' if img_src else "🍛"
+        st.markdown(f'<div class="food-card"><div class="img-wrap">{img_tag}</div><h3>{item["name"]}</h3><div class="price-tag">₹{item["price"]}</div></div>', unsafe_allow_html=True)
         if st.button(f"Add 🛒", key=f"add_{item['id']}", use_container_width=True):
             iid = str(item["id"]); st.session_state["cart"][iid] = st.session_state["cart"].get(iid, {"name":item["name"],"price":item["price"],"qty":0}); st.session_state["cart"][iid]["qty"] += 1; st.toast("Added!")
 
@@ -196,27 +186,40 @@ with st.sidebar:
     if not st.session_state["cart"]: st.info("Empty")
     else:
         for iid, it in st.session_state["cart"].items(): st.write(f"**{it['name']}** x {it['qty']}")
-        if st.button("Order Now 🍛", type="primary"): st.session_state["show_payment"] = True; st.rerun()
+        if st.button("Confirm Order 🍛", type="primary"): st.session_state["show_payment"] = True; st.rerun()
 
-# ── THE ONLY FLOATING BOT HUB (FINAL ALIGNMENT) ──
+# ── BOT REPLIES ──
+def get_bot_response(msg):
+    m = msg.lower()
+    menu = [it["name"] for it in st.session_state["menu"]]
+    if any(k in m for k in ["hi", "hello"]): return "Hello! 👋 I'm **Foodie Bot**. How can I assist you today?"
+    if any(k in m for k in ["item", "menu", "list"]): return f"Our delicious items today are: **{', '.join(menu)}**. What would you like to order?"
+    if "breakfast" in m: return "🌅 Breakfast Specials: Idly, Dosa, and Poori! Dosa is the top choice! 😊"
+    return "I'm here to help you order the best South Indian food! Ask me about the menu or breakfast items. 😊"
+
+# ── THE RE-ALIGNED FLOATING BOT HUB ──
 st.markdown('<div class="chatbot-fixed-hub">', unsafe_allow_html=True)
-now_h = datetime.now().hour
-txt_grt = "Good Morning" if now_h < 12 else "Good Afternoon" if now_h < 18 else "Good Evening"
-st.markdown(f'<div class="greeting-fixed">{txt_grt}! 👋 I\'m your food assistant. What would you like to eat today?</div>', unsafe_allow_html=True)
+now_hour = datetime.now().hour
+txt_greet = "Good Morning" if now_hour < 12 else "Good Afternoon" if now_hour < 18 else "Good Evening"
+st.markdown(f'<div class="greeting-bubble">{txt_greet}! 👋 I\'m your food assistant. What would you like to eat today?</div>', unsafe_allow_html=True)
 
+# THE MASCOT POPOVER
 with st.popover(" "):
-    st.markdown('<h3 style="color:#800020; text-align:center;">Chef Assistant</h3>', unsafe_allow_html=True)
-    chat_box = st.container(height=350, border=False)
-    for ms in st.session_state["messages"]:
-        with chat_box.chat_message(ms["role"]): st.write(ms["content"])
+    # Bot Header with Image at top of panel
+    st.markdown(f'<div style="text-align:center;"><img src="{CHEF_B64}" style="width:70px;height:70px;border-radius:50%;border:3px solid #FF9933;box-shadow:0 4px 10px rgba(0,0,0,0.1);"><h3 style="color:#800020;margin-top:10px;">Foodie Bot Assistant</h3></div>', unsafe_allow_html=True)
     
+    # Scrollable chat box
+    chat_container = st.container(height=350, border=False)
+    for ms in st.session_state["messages"]:
+        with chat_container.chat_message(ms["role"]): st.write(ms["content"])
+    
+    # Input inside the panel
     with st.form("chat_form", clear_on_submit=True):
-        user_q = st.text_input("Ask here...", label_visibility="collapsed")
-        if st.form_submit_button("Send", use_container_width=True):
-            if user_q:
-                st.session_state["messages"].append({"role":"user","content":user_q})
-                ans = "I recommend our special Dosa today! 🍛" if "breakfast" in user_q.lower() else "I'm here to help you order best food! 😊"
-                st.session_state["messages"].append({"role":"assistant","content":ans})
+        user_input = st.text_input("Ask a question...", label_visibility="collapsed")
+        if st.form_submit_button("Send 📩", use_container_width=True):
+            if user_input:
+                st.session_state["messages"].append({"role": "user", "content": user_input})
+                st.session_state["messages"].append({"role": "assistant", "content": get_bot_response(user_input)})
                 st.rerun()
 
 st.markdown('</div>', unsafe_allow_html=True)
