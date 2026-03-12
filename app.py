@@ -90,9 +90,9 @@ html, body, [class*="css"] {{ font-family: 'Poppins', sans-serif; }}
 .food-card {{
     background:white; border:2px solid #FF9933; border-radius:18px; 
     padding:0 0 12px 0; overflow:hidden; text-align:center;
-    box-shadow:0 4px 12px rgba(0,0,0,0.06); transition:0.3s; height:100%; margin-bottom:10px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.1); transition:0.3s; height:100%; margin-bottom:10px;
 }}
-.food-card:hover {{ transform:translateY(-4px); border-color:#FF5500; }}
+.food-card:hover {{ transform:translateY(-4px); border-color:#FF5500; box-shadow:0 15px 35px rgba(255,153,51,0.2); }}
 .img-wrap {{ position:relative; width:100%; height:160px; background:#f5f5f5; }}
 .card-img {{ width:100%; height:100%; object-fit:cover; }}
 
@@ -102,7 +102,7 @@ html, body, [class*="css"] {{ font-family: 'Poppins', sans-serif; }}
 @keyframes smokeRise {{ 0% {{ transform:translateY(0) scale(1); opacity:0; }} 20% {{ opacity:0.8; }} 100% {{ transform:translateY(-130px) scale(4); opacity:0; }} }}
 .p1 {{ animation-delay:0s; }} .p2 {{ animation-delay:0.5s; }} .p3 {{ animation-delay:1s; }} .p4 {{ animation-delay:1.5s; }} .p5 {{ animation-delay:2s; }}
 
-/* === CHATBOT BUBBLE (React Style) === */
+/* === FLOATING BOT VISUAL (React Copy) === */
 .chatbot-float {{
     position: fixed; bottom: 30px; right: 30px; z-index: 10000;
     display: flex; flex-direction: column; align-items: center; gap: 8px;
@@ -140,10 +140,17 @@ html, body, [class*="css"] {{ font-family: 'Poppins', sans-serif; }}
     box-shadow: 0 15px 40px rgba(0,0,0,0.15);
 }}
 
-/* Food card visuals */
+/* Food card labels */
 .food-card h3 {{ color:#800020; font-size:1.15rem; margin:10px 0 2px; font-weight:700; }}
-.price-tag {{ color:#FF6600; font-weight:800; font-size:1.3rem; }}
+.price-tag {{ color:#FF6600; font-weight:800; font-size:1.35rem; }}
 .cat-badge {{ display:inline-block; background:#FF9933; color:white; font-size:0.75rem; font-weight:700; border-radius:20px; padding:3px 15px; margin-bottom:5px; }}
+
+/* Chat Premium box */
+.chat-header-custom {{
+    background: #f8f9fa; padding: 15px; border-radius: 20px 20px 0 0;
+    border-bottom: 2px solid #FF9933; text-align: center;
+}}
+.chat-title-text {{ font-weight: 700; color: #800020; font-size: 1.25rem; }}
 </style>
 """, unsafe_allow_html=True)
 
@@ -168,7 +175,7 @@ if "menu" not in st.session_state:
         {"id":6, "name":"COFFEE", "price":15, "category":"Beverages", "hot":True},
     ]
 
-# ── LOGIN SCREEN ──
+# ── LOGIN ──
 if not st.session_state["logged_in"]:
     chef_t = f'<img src="{CHEF_B64}" style="width:120px;height:120px;border-radius:50%;border:4px solid #FF9933;object-fit:cover;">' if CHEF_B64 else "🍛"
     st.markdown(f'<div style="background:linear-gradient(135deg,#FF9933 0%,#FFFFFF 50%,#138808 100%); padding:100px 0; min-height:95vh;"><div style="background:white; border-radius:30px; padding:60px 40px; max-width:440px; margin:0 auto; box-shadow:0 30px 60px rgba(0,0,0,0.3); text-align:center;">{chef_t}<h1 style="color:#800020; margin-top:20px; font-size:2.5rem;">Welcome</h1><p style="font-weight:700; color:#555; font-size:1.1rem;">South Indian Food Order App</p><p style="font-size:0.8rem; color:#888; margin-top:30px;">copyright@Bhadradri Technologies.Inc</p></div></div>', unsafe_allow_html=True)
@@ -185,7 +192,7 @@ if not st.session_state["logged_in"]:
                 else: st.error("Wrong Credentials!")
     st.stop()
 
-# ── APP HEADER ──
+# ── APP HEADER & BANNER ──
 banner_icon = f'<img src="{BHADRADRI_B64}" class="banner-icon">' if BHADRADRI_B64 else ""
 st.markdown(f'<div class="top-banner">{banner_icon}<div class="marquee-box"><p class="banner-text">This project @ designed by Bhadradri Technologies.Inc</p></div></div>', unsafe_allow_html=True)
 
@@ -193,18 +200,18 @@ logo_img = f'<img src="{LOGIN_FOOD_B64}" class="header-logo">' if LOGIN_FOOD_B64
 sun_icon = f'<img src="{SUNRISE_B64}" style="width:55px;height:55px;vertical-align:middle;margin-left:15px;">' if SUNRISE_B64 else ""
 st.markdown(f'<div class="app-header"><div style="display:flex;align-items:center;">{logo_img}<h1 class="header-title">South Indian Food {sun_icon}</h1></div><div style="color:white; font-weight:700; font-size:1.2rem;">Hi, {st.session_state["username"]}</div></div>', unsafe_allow_html=True)
 
-# ── PAYMENT GATEWAY (Top Level) ──
+# ── PAYMENT GATEWAY ──
 if st.session_state["show_payment"]:
     st.markdown('<div class="payment-overlay">', unsafe_allow_html=True)
     st.markdown('<h2 style="color:#800020; text-align:center; border-bottom:3px solid #FF9933; padding-bottom:10px;">🛡️ Secure Checkout</h2>', unsafe_allow_html=True)
-    p1, p2 = st.columns([1.2, 1])
+    pay1, pay2 = st.columns([1.2, 1])
     order_total = sum(it['price']*it['qty'] for it in st.session_state["cart"].values())
-    with p1:
+    with pay1:
         st.markdown("### 📋 Order Summary")
         for iid, item in st.session_state["cart"].items():
             st.markdown(f"• **{item['name']}** x {item['qty']} <span style='float:right;'>₹{item['price']*item['qty']}</span>", unsafe_allow_html=True)
         st.markdown(f"<div style='border-top:2px solid #FF9933; margin-top:10px; padding-top:10px; font-size:1.8rem; font-weight:800; color:#FF6600;'>Total: ₹{order_total}</div>", unsafe_allow_html=True)
-    with p2:
+    with pay2:
         qr_bytes = generate_upi_qr(f"upi://pay?pa=merchant@upi&pn=SouthIndianDelights&am={order_total}&cu=INR")
         st.markdown('<div style="background:white; padding:15px; border-radius:15px; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.1);">', unsafe_allow_html=True)
         st.image(qr_bytes, width=200, caption="Scan to Pay")
@@ -218,7 +225,7 @@ if st.session_state["show_payment"]:
             st.balloons(); st.success("Verified!"); st.session_state["cart"] = {}; st.session_state["show_payment"] = False; st.rerun()
     st.markdown('</div>', unsafe_allow_html=True)
 
-# ── ACTIONS ──
+# ── TOP ACTION BUTTONS ──
 btn1, btn2, btn3, btn4 = st.columns([1,1,3,1])
 with btn1:
     if st.button("🔐 Admin", use_container_width=True): st.session_state["admin_mode"] = not st.session_state["admin_mode"]
@@ -240,7 +247,7 @@ if st.session_state["admin_mode"]:
             if st.form_submit_button("Add Item"):
                 st.session_state["menu"].append({"id": len(st.session_state["menu"])+1, "name":n.upper(), "price":p, "category":c, "hot":h}); st.rerun()
 
-# ── MENU GRID ──
+# ── MENU ──
 st.markdown('<h2 style="color:#800020; border-bottom:3px solid #FF9933; margin-top:20px; padding-bottom:10px;">🍽️ Fresh Menu</h2>', unsafe_allow_html=True)
 mcols = st.columns(4)
 for i, item in enumerate(st.session_state["menu"]):
@@ -260,28 +267,29 @@ with st.sidebar:
     st.title("🛒 Your Order")
     if not st.session_state["cart"]: st.info("Empty Cart")
     else:
-        cart_total = 0
-        for iid, itm in st.session_state["cart"].items():
-            sub = itm['price']*itm['qty']; cart_total += sub; st.write(f"**{itm['name']}** x {itm['qty']} - ₹{sub}")
-        st.markdown(f"### Total: ₹{cart_total}")
+        cart_tot = 0
+        for iid, it in st.session_state["cart"].items():
+            sub = it['price']*it['qty']; cart_tot += sub; st.write(f"**{it['name']}** x {it['qty']} - ₹{sub}")
+        st.markdown(f"### Pay: ₹{cart_tot}")
         if st.button("Confirm Order 🍛", type="primary", use_container_width=True):
             st.session_state["show_payment"] = True; st.rerun()
 
-# ── THE ONLY CHATBOT LOGIC ──
+# ── THE ONLY CHATBOT (Foodie Bot) ──
 def get_bot_reply(msg):
     m = msg.lower()
     menu = st.session_state["menu"]
-    if any(k in m for k in ["hi", "hello", "hey"]): return "Hello! 👋 I'm your South Indian Food assistant. How can I help you today?"
+    if any(k in m for k in ["hi", "hello", "hey"]): return "Hello! 👋 I'm Foodie Bot. I can help you find delicious South Indian food. What are you craving?"
     if any(k in m for k in ["breakfast", "morning"]): 
         items = [i["name"] for i in menu if i["category"]=="Breakfast"]
-        return f"🌅 Breakfast specials: {', '.join(items)}. The DOSA is highly recommended!"
-    if any(k in m for k in ["price", "cost", "how much"]): return "💰 Our items range from ₹10 to ₹50."
-    if any(k in m for k in ["best", "popular", "recommend"]): return "🌟 You must try the **DOSA** and **IDLY**! They are our bestsellers."
-    return "I'm here to help! 🍛 Ask me about breakfast, prices, or recommendations."
+        return f"🌅 Morning! Try our breakfast specials: {', '.join(items)}. Soft Idly or Crispy Dosa? Choose one! 😊"
+    if any(k in m for k in ["price", "cost", "how much"]): return "💰 Our food is very pocket-friendly! Prices start at ₹10 and go up to ₹50."
+    if any(k in m for k in ["popular", "best", "recommend", "delicious"]): return "🌟 If you want the REAL taste, try the **DOSA** or **POORI**! For a light snack, the **VADA** is king."
+    if any(k in m for k in ["spicy", "hot"]): return "🌶️ Looking for heat? Our snacks like **MASALA VADA** have the perfect spice punch!"
+    return "I can help with that! 🍛 Try asking about our breakfast, popular items, or prices."
 
 # Visual Float (Avatar + Tooltip)
-now_h = datetime.now().hour
-txt_grt = "Good Morning" if now_h < 12 else "Good Afternoon" if now_h < 18 else "Good Evening"
+hr = datetime.now().hour
+txt_grt = "Good Morning" if hr < 12 else "Good Afternoon" if hr < 18 else "Good Evening"
 c_cnt = sum(i["qty"] for i in st.session_state["cart"].values())
 c_badg = f'<div class="cart-badge-bot">{c_cnt}</div>' if c_cnt > 0 else ""
 bot_img_tag = f'<img src="{CHAT_BOT_B64}" class="bot-img-main">' if CHAT_BOT_B64 else "🤖"
@@ -289,22 +297,32 @@ bot_img_tag = f'<img src="{CHAT_BOT_B64}" class="bot-img-main">' if CHAT_BOT_B64
 chat_bubble_html = f'<div class="chatbot-float"><div class="chat-tooltip">{txt_grt}! 👋 I\'m your food assistant. What would you like to eat today?</div><div class="bot-avatar-box">{bot_img_tag}{c_badg}</div></div>'
 st.markdown(chat_bubble_html, unsafe_allow_html=True)
 
-# THE ONLY CHAT INTERFACE
+# THE UNIFIED INTERFACE (Exactly 'Chat with Foodie Bot')
 st.markdown("---")
-st.markdown('<h2 style="color:#800020; text-align:center;">🤖 Chat with Foodie Bot</h2>', unsafe_allow_html=True)
+st.markdown('<div class="chat-header-custom"><span class="chat-title-text">Chat with Foodie Bot</span></div>', unsafe_allow_html=True)
 
-chat_area = st.container(height=350, border=True)
-with chat_area:
+chat_win = st.container(height=400, border=True)
+with chat_win:
     for ms in st.session_state["messages"]:
         with st.chat_message(ms["role"]): st.markdown(ms["content"])
 
-if prompt := st.chat_input("Ask Foodie Bot..."):
-    st.session_state["messages"].append({"role": "user", "content": prompt})
-    with chat_area.chat_message("user"): st.markdown(prompt)
-    
-    reply = get_bot_reply(prompt)
-    st.session_state["messages"].append({"role": "assistant", "content": reply})
-    with chat_area.chat_message("assistant"): st.markdown(reply)
+# Quick Suggestion Buttons (as seen in React copy)
+qcl1, qcl2, qcl3, qcl4 = st.columns(4)
+with qcl1:
+    if st.button("🌅 Breakfast"): st.session_state["messages"].append({"role":"user","content":"Show breakfast items"}); st.session_state["messages"].append({"role":"assistant","content":get_bot_reply("breakfast")}); st.rerun()
+with qcl2:
+    if st.button("🌶️ Spicy?"): st.session_state["messages"].append({"role":"user","content":"What's spicy?"}); st.session_state["messages"].append({"role":"assistant","content":get_bot_reply("spicy")}); st.rerun()
+with qcl3:
+    if st.button("🌟 Best?"): st.session_state["messages"].append({"role":"user","content":"What's best?"}); st.session_state["messages"].append({"role":"assistant","content":get_bot_reply("best")}); st.rerun()
+with qcl4:
+    if st.button("💰 Budget?"): st.session_state["messages"].append({"role":"user","content":"Budget items?"}); st.session_state["messages"].append({"role":"assistant","content":get_bot_reply("price")}); st.rerun()
+
+if p := st.chat_input("Ask Foodie Bot..."):
+    st.session_state["messages"].append({"role": "user", "content": p})
+    with chat_win.chat_message("user"): st.markdown(p)
+    rep = get_bot_reply(p)
+    st.session_state["messages"].append({"role": "assistant", "content": rep})
+    with chat_win.chat_message("assistant"): st.markdown(rep)
     st.rerun()
 
 st.caption("Bhadradri Technologies.Inc © 2025")
