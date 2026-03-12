@@ -27,7 +27,8 @@ def img_b64(path: Path) -> str:
     return ""
 
 BHADRADRI_B64    = img_b64(ASSETS / "bhadradri-icon-small.png")
-CHEF_B64         = img_b64(ASSETS / "south-indian-chef.png")
+# CORRECTION: Using chatbot-icon.png as the Lady Chef Mascot requested
+CHEF_B64         = img_b64(ASSETS / "chatbot-icon.png")
 SUNRISE_B64      = img_b64(ASSETS / "sunrise-icon.png")
 LOGIN_FOOD_B64   = img_b64(ASSETS / "login-food.png")
 SHOWCASE_VIDEO   = ASSETS / "showcase-video-1.mp4"
@@ -58,7 +59,18 @@ st.markdown(f"""
 @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600;700&display=swap');
 html, body, [class*="css"] {{ font-family: 'Poppins', sans-serif; }}
 
-/* HEADER STYLING */
+/* BANNER & HEADER */
+.top-banner {{
+    width:100%; height:32px; background:blueviolet; padding:0 12px;
+    display:flex; align-items:center; gap:10px; border-radius:10px; margin-bottom:12px; overflow:hidden;
+}}
+.marquee-box {{ flex:1; overflow:hidden; white-space:nowrap; }}
+.banner-text {{
+    display:inline-block; font-size:0.8rem; color:white; font-weight:500; font-style:italic;
+    animation: marqueeScroll 25s linear infinite; margin:0; padding-left:100%;
+}}
+@keyframes marqueeScroll {{ 0% {{ transform:translateX(0); }} 100% {{ transform:translateX(-100%); }} }}
+
 .app-header {{
     background:linear-gradient(135deg,#FF9933 0%,#FF7700 100%);
     padding:12px 20px; border-radius:16px; margin-bottom:20px;
@@ -76,9 +88,9 @@ html, body, [class*="css"] {{ font-family: 'Poppins', sans-serif; }}
 .img-wrap {{ position:relative; width:100%; height:150px; background:#f5f5f5; }}
 .card-img {{ width:100%; height:100%; object-fit:cover; }}
 
-/* === THE TRUE FLOATING CHATBOT (FIXED) === */
+/* === THE ONLY FLOATING BOT (FIXED VISUALS & ALIGNMENT) === */
 .chatbot-fixed-hub {{
-    position: fixed; bottom: 30px; right: 30px; z-index: 10000;
+    position: fixed; bottom: 30px; right: 30px; z-index: 100000;
     display: flex; flex-direction: column; align-items: flex-end; gap: 0px;
 }}
 
@@ -90,7 +102,7 @@ html, body, [class*="css"] {{ font-family: 'Poppins', sans-serif; }}
     margin-bottom: 12px; position: relative; animation: fadeIn 0.5s ease-out;
 }}
 .greeting-fixed::after {{
-    content: ''; position: absolute; bottom: -8px; right: 30px;
+    content: ''; position: absolute; bottom: -8px; right: 35px;
     width: 0; height: 0; border-left: 8px solid transparent;
     border-right: 8px solid transparent; border-top: 8px solid white;
 }}
@@ -105,22 +117,22 @@ div[data-testid="stPopover"] button {{
     background-size: cover !important;
     background-position: center !important;
     background-color: white !important;
-    width: 90px !important;
-    height: 90px !important;
+    width: 95px !important;
+    height: 95px !important;
     border-radius: 50% !important;
     border: 4px solid white !important;
     box-shadow: 0 10px 30px rgba(0,0,0,0.4) !important;
     animation: bounceChef 2s infinite ease-in-out !important;
-    color: transparent !important; /* Hide any emoji/text */
+    color: transparent !important;
+    margin-top: 10px !important;
 }}
 div[data-testid="stPopover"] button div {{
-    display: none !important; /* Hide chevron and label */
+    display: none !important;
 }}
 
-@keyframes bounceChef {{ 0%, 100% {{ transform:translateY(0); }} 50% {{ transform:translateY(-10px); }} }}
+@keyframes bounceChef {{ 0%, 100% {{ transform:translateY(0); }} 50% {{ transform:translateY(-12px); }} }}
 @keyframes fadeIn {{ from {{ opacity:0; transform:translateY(10px); }} to {{ opacity:1; transform:translateY(0); }} }}
 
-/* Payment Visibility */
 .payment-box {{ background:#fff3e0; padding:30px; border-radius:24px; border:4px solid #FF9933; margin:20px 0; }}
 </style>
 """, unsafe_allow_html=True)
@@ -186,26 +198,23 @@ with st.sidebar:
         for iid, it in st.session_state["cart"].items(): st.write(f"**{it['name']}** x {it['qty']}")
         if st.button("Order Now 🍛", type="primary"): st.session_state["show_payment"] = True; st.rerun()
 
-# ── THE FINAL CHATBOT (FIXED VISUALS) ──
+# ── THE ONLY FLOATING BOT HUB (FINAL ALIGNMENT) ──
 st.markdown('<div class="chatbot-fixed-hub">', unsafe_allow_html=True)
 now_h = datetime.now().hour
-gr = "Good Morning" if now_h < 12 else "Good Afternoon" if now_h < 18 else "Good Evening"
-st.markdown(f'<div class="greeting-fixed">{gr}! 👋 I\'m your food assistant. What would you like to eat today?</div>', unsafe_allow_html=True)
+txt_grt = "Good Morning" if now_h < 12 else "Good Afternoon" if now_h < 18 else "Good Evening"
+st.markdown(f'<div class="greeting-fixed">{txt_grt}! 👋 I\'m your food assistant. What would you like to eat today?</div>', unsafe_allow_html=True)
 
-# THE MASCOT POPOVER - CSS will override this button to be the Image
 with st.popover(" "):
     st.markdown('<h3 style="color:#800020; text-align:center;">Chef Assistant</h3>', unsafe_allow_html=True)
     chat_box = st.container(height=350, border=False)
     for ms in st.session_state["messages"]:
         with chat_box.chat_message(ms["role"]): st.write(ms["content"])
     
-    # Input field INSIDE the popover
     with st.form("chat_form", clear_on_submit=True):
         user_q = st.text_input("Ask here...", label_visibility="collapsed")
         if st.form_submit_button("Send", use_container_width=True):
             if user_q:
                 st.session_state["messages"].append({"role":"user","content":user_q})
-                # simple logic
                 ans = "I recommend our special Dosa today! 🍛" if "breakfast" in user_q.lower() else "I'm here to help you order best food! 😊"
                 st.session_state["messages"].append({"role":"assistant","content":ans})
                 st.rerun()
